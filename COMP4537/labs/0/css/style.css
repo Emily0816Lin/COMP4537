@@ -1,0 +1,24 @@
+/* Disclosure: I used ChatGPT to assist with the content of this assignment. */
+
+#buttonContainer {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.generated-button {
+    height: 5em;
+    width: 10em;
+    font-size: 1.5em;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #000;
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 1.5em;
+    color: red;
+}
