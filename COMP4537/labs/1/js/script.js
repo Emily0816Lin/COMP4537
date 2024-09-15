@@ -1,5 +1,5 @@
 // Disclosure: I used ChatGPT to assist with the content of this assignment.
-// js/script.js
+
 
 import messages from '../lang/messages/en/user.js';  // Import the messages
 
@@ -124,10 +124,7 @@ class Navigation {
 
 // Initialize the appropriate class based on the current page
 window.onload = () => {
-    // if (window.location.pathname.includes("index.html")) {
-    //     new Navigation();
-    // } else 
-    
+
     if (window.location.pathname.includes("writer.html")) {
         new Writer();
     } else if (window.location.pathname.includes("reader.html")) {
