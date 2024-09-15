@@ -124,11 +124,15 @@ class Navigation {
 
 // Initialize the appropriate class based on the current page
 window.onload = () => {
-    if (window.location.pathname.includes("index.html")) {
-        new Navigation();
-    } else if (window.location.pathname.includes("writer.html")) {
+    // if (window.location.pathname.includes("index.html")) {
+    //     new Navigation();
+    // } else 
+    
+    if (window.location.pathname.includes("writer.html")) {
         new Writer();
     } else if (window.location.pathname.includes("reader.html")) {
         new Reader();
+    } else {
+        new Navigation();
     }
 };

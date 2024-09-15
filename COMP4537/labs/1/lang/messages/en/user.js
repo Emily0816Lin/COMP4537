@@ -15,5 +15,4 @@ const messages = {
     lastSaved: "Last saved:"
 };
 
-
 export default messages;
