@@ -1,5 +1,7 @@
 // Disclosure: I used ChatGPT to assist with the content of this assignment.
+// js/script.js
 
+import messages from '../lang/messages/en/user.js';  // Import the messages
 
 const storageKey = 'notes';  // Define the key used for localStorage
 
