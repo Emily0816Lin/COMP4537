@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
   const name = queryObject.name || 'Guest';
 
   // Set response header for HTML content
-  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.write('<h1>Welcome to the Node.js HTTP Server!</h1>');
 
   // Create a blue-colored response
