@@ -14,13 +14,15 @@ const server = http.createServer((req, res) => {
 
   // Set response header for HTML content
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.write('<h1>Welcome to the Node.js HTTP Server!</h1>');
+  res.write("Response's coming from server ...\n");
+  console.log('Response sent to client\n');
 
   // Create a blue-colored response
   const message = `<p style="color:blue">${messages.greeting.replace('%1', name)} ${getDate()}</p>`;
 
   // Send response
-  res.end(message);
+  // res.end(message);
+  res.end('Hello World!');
 });
 
 // Listen on port 3000
