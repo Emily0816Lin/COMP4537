@@ -1,0 +1,16 @@
+{
+  "name": "3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "api/server.js",
+  "scripts": {
+    "start": "node api/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "some-dependency": "^0.0.1-security"
+  }
+}

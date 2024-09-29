@@ -2,7 +2,7 @@
 
 // import messages from '../lang/en/en.js';
 
-// server.js
+// /api/server.js
 const http = require('http');
 const url = require('url');
 // const { getDate } = require('./modules/utils');
@@ -26,6 +26,8 @@ const server = http.createServer((req, res) => {
 });
 
 // Listen on port 3000
-server.listen(3000, () => {
-  console.log('Server is running on port 3000');
-});
+// server.listen(3000, () => {
+//   console.log('Server is running on port 3000');
+// });
+
+module.exports = server;
