@@ -110,7 +110,6 @@
 
 
 
-
 const http = require('http');
 const url = require('url');
 const fs = require('fs');
@@ -124,18 +123,19 @@ const handleNotFound = (res, fileName) => {
   res.end(`<p style="color:red;">File "${fileName}" not found!</p>`);
 };
 
-// Define the path to /tmp/file.txt
-const filePath = path.join('/tmp', 'file.txt');
+// Define the directory to save/read files
+const tmpDir = '/tmp';
 
 const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
-  const path = parsedUrl.pathname;
+  const pathName = parsedUrl.pathname;
   const query = parsedUrl.query;
 
-  if (path.startsWith('/COMP4537/labs/3/writeFile')) {
+  if (pathName.startsWith('/COMP4537/labs/3/writeFile')) {
     const text = query.text || '';
 
     // Append the text to /tmp/file.txt
+    const filePath = path.join(tmpDir, 'file.txt');
     fs.appendFile(filePath, text + '\n', (err) => {
       if (err) {
         res.writeHead(500, { 'Content-Type': 'text/html' });
@@ -146,10 +146,13 @@ const server = http.createServer((req, res) => {
       }
     });
 
-  } else if (path.startsWith('/COMP4537/labs/3/readFile')) {
-    const fileName = path.split('/').pop();
+  } else if (pathName.startsWith('/COMP4537/labs/3/readFile')) {
+    const fileName = pathName.split('/').pop();
 
-    // Read the content of the specified file from /tmp/file.txt
+    // Dynamically use the filename from the URL
+    const filePath = path.join(tmpDir, fileName);
+
+    // Read the content of the specified file
     fs.readFile(filePath, 'utf8', (err, data) => {
       if (err) {
         if (err.code === 'ENOENT') {
@@ -164,7 +167,7 @@ const server = http.createServer((req, res) => {
       }
     });
 
-  } else if (path.startsWith('/COMP4537/labs/3/getDate')) {
+  } else if (pathName.startsWith('/COMP4537/labs/3/getDate')) {
     const name = query.name || 'Guest';
 
     // Set response header for HTML content
@@ -184,4 +187,3 @@ const server = http.createServer((req, res) => {
 });
 
 module.exports = server;
-
