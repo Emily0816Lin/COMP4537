@@ -1,13 +1,12 @@
 // Disclosure: I used ChatGPT to assist with the content of this assignment.
 
-// import messages from '../lang/en/en.js';
-
+import messages from '../lang/en/en.js';
 
 // server.js
 const http = require('http');
 const url = require('url');
 const { getDate } = require('./modules/utils');
-const messages = require('./lang/en/en');
+// const messages = require('./lang/en/en');
 
 const server = http.createServer((req, res) => {
   const queryObject = url.parse(req.url, true).query;
