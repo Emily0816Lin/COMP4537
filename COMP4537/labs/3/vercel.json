@@ -1,8 +1,8 @@
 {
     "rewrites": [
       {
-        "source": "/labs/3",
-        "destination": "/labs/3/api/server"
+        "source": "COMP4537/labs/3",
+        "destination": "COMP4537/labs/3/api/server"
       }
     ]
   }
