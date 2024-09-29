@@ -18,11 +18,11 @@ const server = http.createServer((req, res) => {
   console.log('Response sent to client\n');
 
   // Create a blue-colored response
-  const message = `<p style="color:blue">${messages.greeting.replace('%1', name)} ${getDate()}</p>`;
+  // const message = `<p style="color:blue">${messages.greeting.replace('%1', name)} ${getDate()}</p>`;
 
   // Send response
-  res.end(message);
-  // res.end('Hello World!');
+  // res.end(message);
+  res.end('Hello World!');
 });
 
 // Listen on port 3000
