@@ -24,6 +24,8 @@ class ColorGenerator {
     }
 }
 
+
+///////
 // Button Class to create and handle individual button elements
 class MemoryButton {
     constructor(color, width, height, order) {
