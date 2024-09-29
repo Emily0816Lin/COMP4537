@@ -50,7 +50,7 @@ const server = http.createServer((req, res) => {
   const path = parsedUrl.pathname;
   const query = parsedUrl.query;
 
-  if (path.startsWith('/writeFile')) {
+  if (path.startsWith('/COMP4537/labs/3/writeFile')) {
     const text = query.text || '';
 
     // Append the text to file.txt
@@ -64,7 +64,7 @@ const server = http.createServer((req, res) => {
       }
     });
 
-  } else if (path.startsWith('/readFile')) {
+  } else if (path.startsWith('/COMP4537/labs/3/readFile')) {
     const fileName = path.split('/').pop();
 
     // Read the content of the specified file
@@ -82,7 +82,7 @@ const server = http.createServer((req, res) => {
       }
     });
 
-  } else if (path.startsWith('/getDate')) {
+  } else if (path.startsWith('/COMP4537/labs/3/getDate')) {
     const name = query.name || 'Guest';
 
     // Set response header for HTML content
