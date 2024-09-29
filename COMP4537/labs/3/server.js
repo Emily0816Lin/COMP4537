@@ -13,7 +13,7 @@ const server = http.createServer((req, res) => {
   const name = queryObject.name || 'Guest';
 
   // Set response header for HTML content
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.writeHead(200, { 'Content-Type': 'text/html' });
   res.write("Response's coming from server ...\n");
   console.log('Response sent to client\n');
 
@@ -21,8 +21,8 @@ const server = http.createServer((req, res) => {
   const message = `<p style="color:blue">${messages.greeting.replace('%1', name)} ${getDate()}</p>`;
 
   // Send response
-  // res.end(message);
-  res.end('Hello World!');
+  res.end(message);
+  // res.end('Hello World!');
 });
 
 // Listen on port 3000
