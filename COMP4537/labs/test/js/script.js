@@ -1,135 +1,188 @@
 // Disclosure: I used ChatGPT to assist with the content of this assignment.
 
+import messages from '../lang/messages/en/user.js';
 
-import messages from '../lang/messages/en/user.js';  // Import the messages
+document.addEventListener('DOMContentLoaded', () => {
+    // Set the label text using the message from user.js
+    document.getElementById('labelText').textContent = messages.howManyButtons;
 
-const storageKey = 'notes';  // Define the key used for localStorage, allowing the app to persist data between sessions.
+    // Add event listener for the button
+    document.getElementById('createButtonsBtn').addEventListener('click', () => {
+        game.createButtons();
+    });
+});
 
-// Class for handling Notes
-class Note {
-    constructor(content = "") {
-        this.content = content;
+// Utility Class to handle color generation
+class ColorGenerator {
+    static getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
     }
 }
 
-// Class to manage the Writer functionality
-class Writer {
+
+///////
+// Button Class to create and handle individual button elements
+class MemoryButton {
+    constructor(color, width, height, order) {
+        this.order = order;
+        this.color = color;
+        this.width = width;
+        this.height = height;
+        this.buttonElement = this.createButtonElement();
+    }
+
+    createButtonElement() {
+        const button = document.createElement('button');
+        button.className = 'generated-button';
+        button.dataset.order = this.order;
+        button.style.backgroundColor = this.color;
+        button.style.width = this.width;
+        button.style.height = this.height;
+        button.textContent = this.order; // Initially, show the order number
+        document.getElementById('buttonContainer').appendChild(button);
+        return button;
+    }
+
+    setPositionAbsolute() {
+        this.buttonElement.style.position = 'absolute';
+    }
+
+    setLocation(top, left) {
+        this.buttonElement.style.top = top + 'px';
+        this.buttonElement.style.left = left + 'px';
+    }
+
+    revealOrder() {
+        this.buttonElement.textContent = this.order;
+    }
+
+    hideOrder() {
+        this.buttonElement.textContent = '';
+    }
+
+    attachClickHandler(handler) {
+        this.buttonElement.onclick = () => handler(this.order);
+    }
+
+    getWidth() {
+        return parseInt(this.buttonElement.offsetWidth);
+    }
+
+    getHeight() {
+        return parseInt(this.buttonElement.offsetHeight);
+    }
+}
+
+// Memory Game Class to handle the game logic
+class MemoryGame {
     constructor() {
-        document.querySelector('h1').innerText = messages.writerPageTitle;
-        document.querySelector('.top-right-time').innerHTML = `${messages.lastSaved} <span id="lastSaved">--:--:--</span>`;
-        document.querySelector('a').innerText = messages.backToHome;
-
-        this.notes = this.loadNotes(); // Load notes from localStorage
-        this.notesContainer = document.getElementById("notesContainer");
-        this.lastSaved = document.getElementById("lastSaved");
-
-        const addNoteButton = document.getElementById('addNote');
-        addNoteButton.innerText = messages.addNote;
-        addNoteButton.addEventListener('click', () => this.addNote());
-
-        this.displayNotes(); //Display all existing notes
-        setInterval(() => this.saveNotes(), 2000); //Auto-save notes every 2 seconds
+        this.correctOrder = [];
+        this.userOrder = [];
+        this.currentIndex = 0;
+        this.buttons = [];
+        this.scrambleTimeoutId = null; // Store the timeout ID
     }
 
-    loadNotes() {
-        const savedNotes = JSON.parse(localStorage.getItem(storageKey)) || [];  // Retrieve notes from localStorage, and then parses the retrieved json string into a javascript array of objects
-        return savedNotes.map(noteData => new Note(noteData.content));  // Each object(note) is then mapped to a new Note object
+    createButtons() {
+        // Clear any existing timeout to reset the game state
+        if (this.scrambleTimeoutId) {
+            clearTimeout(this.scrambleTimeoutId);
+            this.scrambleTimeoutId = null; // Reset the timeout ID
+        }
+
+
+        const count = parseInt(document.getElementById('buttonCount').value);
+        if (count < 3 || count > 7) {
+            alert(messages.numberRangeError); // Displaying message from user.js
+            return;
+        }
+
+        document.getElementById('buttonContainer').innerHTML = ''; // Clear existing buttons
+        document.getElementById('message').textContent = ''; // Clear any messages
+
+        this.correctOrder = [];
+        this.userOrder = [];
+        this.currentIndex = 0;
+        this.buttons = [];
+
+        for (let i = 1; i <= count; i++) {
+            const color = ColorGenerator.getRandomColor();
+            const button = new MemoryButton(color, '10em', '5em', i);
+            this.buttons.push(button);
+            this.correctOrder.push(i);
+        }
+
+        // After buttons are displayed, switch their position to absolute for movements
+        // setTimeout(() => this.setPositionAbsoluteAndScramble(count), count * 1000);
+        this.scrambleTimeoutId = setTimeout(() => this.setPositionAbsoluteAndScramble(count), count * 1000);
+
     }
 
-    addNote() {
-        const newNote = new Note();
-        this.notes.push(newNote);
-        this.displayNotes();
+    setPositionAbsoluteAndScramble(count) {
+        this.buttons.forEach(button => {
+            button.setPositionAbsolute(); // Set position to absolute
+            const top = Math.floor(Math.random() * (window.innerHeight - button.getHeight()));
+            const left = Math.floor(Math.random() * (window.innerWidth - button.getWidth()));
+            button.setLocation(top, left); // Position them initially
+        });
+        this.scrambleButtons(count);
     }
 
-    displayNotes() {
-        this.notesContainer.innerHTML = ""; // clears the container
-        this.notes.forEach((note, index) => {
-            const noteElement = document.createElement("div");
-            const textArea = document.createElement("textarea");
-            textArea.value = note.content;
-            textArea.placeholder = messages.notePlaceholder;
-            textArea.oninput = (e) => this.updateNoteContent(index, e.target.value);
+    scrambleButtons(count) {
+        this.scrambleTimes(count, 0, count);
+    }
 
-            const removeButton = document.createElement("button");
-            removeButton.innerText = messages.removeNote;
-            removeButton.onclick = () => this.removeNote(index);
+    scrambleTimes(times, currentTime, totalTimes) {
+        if (currentTime >= totalTimes) {
+            // After all scrambles are done, hide the numbers
+            this.buttons.forEach(button => button.hideOrder());
+            this.makeButtonsClickable(); // Then make the buttons clickable
+            return;
+        }
 
-            noteElement.appendChild(textArea);
-            noteElement.appendChild(removeButton);
-            this.notesContainer.appendChild(noteElement);
+        this.buttons.forEach(button => {
+            // Get current window size minus button dimensions
+            const maxTop = window.innerHeight - button.getHeight();
+            const maxLeft = window.innerWidth - button.getWidth();
+
+            const top = Math.floor(Math.random() * maxTop);
+            const left = Math.floor(Math.random() * maxLeft);
+            button.setLocation(top, left);
+        });
+
+        // setTimeout(() => this.scrambleTimes(times, currentTime + 1, totalTimes), 2000);
+        // Keep track of scramble timeouts and ensure they can be cleared
+        this.scrambleTimeoutId = setTimeout(() => this.scrambleTimes(times, currentTime + 1, totalTimes), 2000);
+    }
+
+    makeButtonsClickable() {
+        this.buttons.forEach(button => {
+            button.attachClickHandler(this.checkOrder.bind(this));
         });
     }
 
-    updateNoteContent(index, content) {
-        this.notes[index].content = content;
+    checkOrder(order) {
+        if (order === this.correctOrder[this.currentIndex]) {
+            this.buttons[order - 1].revealOrder();
+            this.currentIndex++;
+            if (this.currentIndex === this.correctOrder.length) {
+                document.getElementById('message').textContent = messages.excellentMemory; // Displaying message from user.js
+            }
+        } else {
+            document.getElementById('message').textContent = messages.wrongOrder; // Displaying message from user.js
+            this.revealCorrectOrder();
+        }
     }
 
-    removeNote(index) {
-        this.notes.splice(index, 1);    //splice() method removes the note at the specified index from the this.notes array
-        this.displayNotes(); //refresh the display
-    }
-
-    saveNotes() {
-        localStorage.setItem(storageKey, JSON.stringify(this.notes)); //serialize the this.notes array into a JSON string and store it in localStorage
-        this.lastSaved.innerText = new Date().toLocaleTimeString();
-    }
-}
-
-// Class to manage the Reader functionality
-class Reader {
-    constructor() {
-        document.querySelector('h1').innerText = messages.readerPageTitle;
-        document.querySelector('.top-right-time').innerHTML = `${messages.lastUpdated} <span id="lastUpdated">--:--:--</span>`;
-        document.querySelector('a').innerText = messages.backToHome;
-
-        this.notesDisplay = document.getElementById("notesDisplay");
-        this.lastUpdated = document.getElementById("lastUpdated");
-
-        this.loadNotes();   // Load notes from localStorage and display them
-        setInterval(() => this.loadNotes(), 2000);  // Reload notes every 2 seconds
-    }
-
-    loadNotes() {
-        const savedNotes = JSON.parse(localStorage.getItem(storageKey)) || [];
-        this.notesDisplay.innerHTML = "";
-        savedNotes.forEach(noteData => {
-            const noteElement = document.createElement("div");
-            const textArea = document.createElement("textarea");
-            textArea.value = noteData.content;
-            textArea.readOnly = true;
-
-            noteElement.appendChild(textArea);
-            this.notesDisplay.appendChild(noteElement);
-        });
-        this.lastUpdated.innerText = new Date().toLocaleTimeString();
+    revealCorrectOrder() {
+        this.buttons.forEach(button => button.revealOrder());
     }
 }
 
-// Class to handle navigation in index.html
-class Navigation {
-    constructor() {
-        document.getElementById('labTitle').innerText = messages.labTitle;
-        document.getElementById('studentName').innerText = messages.studentName;
-
-        const goToWriterButton = document.getElementById('goToWriter');
-        goToWriterButton.innerText = messages.goToWriter;
-        goToWriterButton.onclick = () => window.location.href = 'writer.html';
-
-        const goToReaderButton = document.getElementById('goToReader');
-        goToReaderButton.innerText = messages.goToReader;
-        goToReaderButton.onclick = () => window.location.href = 'reader.html';
-    }
-}
-
-// Initialize the appropriate class based on the current page
-window.onload = () => {
-
-    if (window.location.pathname.includes("writer.html")) {
-        new Writer();
-    } else if (window.location.pathname.includes("reader.html")) {
-        new Reader();
-    } else {
-        new Navigation();
-    }
-};
+// Initialize the game instance
+const game = new MemoryGame();
