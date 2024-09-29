@@ -11,6 +11,5 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "some-dependency": "^0.0.1-security"
   }
 }
