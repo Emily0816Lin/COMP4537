@@ -64,7 +64,10 @@ class APIHandler {
   // getDate() function to return a greeting message with the current date
   getDateResponse(res, name) {
     const message = `<p style="color:blue">${messages.greeting.replace('%1', name)} ${getDate()}</p>`;
-    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.writeHead(200, {
+      'Content-Type': 'text/html',
+      'Access-Control-Allow-Origin': '*'
+    });
     res.end(message);
   }
 }
