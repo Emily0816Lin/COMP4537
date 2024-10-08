@@ -93,26 +93,6 @@ class Server {
     return server;
   }
 
-  // // Function to handle different request routes
-  // handleRequest(req, res) {
-  //   const parsedUrl = url.parse(req.url, true);
-  //   const pathName = parsedUrl.pathname;
-  //   const query = parsedUrl.query;
-
-  //   if (pathName.includes('/writeFile')) {
-  //     const text = query.text || '';
-  //     this.fileHandler.writeFile(res, text);
-  //   } else if (pathName.includes('/readFile')) {
-  //     const fileName = pathName.split('/').pop();
-  //     this.fileHandler.readFile(res, fileName);
-  //   } else if (pathName.includes('/getDate')) {
-  //     const name = query.name || 'Guest';
-  //     this.apiHandler.getDateResponse(res, name);  // Use APIHandler for API logic
-  //   } else {
-  //     this.invalidRequest(res);
-  //   }
-  // }
-
   // Function to handle different request routes
   handleRequest(req, res) {
     const parsedUrl = url.parse(req.url, true);
@@ -120,19 +100,18 @@ class Server {
     const query = parsedUrl.query;
 
     if (pathName.includes('/writeFile')) {
-      const text = decodeURIComponent(query.text || ''); // Decode special characters in the text
+      const text = query.text || '';
       this.fileHandler.writeFile(res, text);
     } else if (pathName.includes('/readFile')) {
-      const fileName = decodeURIComponent(pathName.split('/').pop()); // Decode file name if necessary
+      const fileName = pathName.split('/').pop();
       this.fileHandler.readFile(res, fileName);
     } else if (pathName.includes('/getDate')) {
-      const name = decodeURIComponent(query.name || 'Guest'); // Decode the name parameter
+      const name = query.name || 'Guest';
       this.apiHandler.getDateResponse(res, name);  // Use APIHandler for API logic
     } else {
       this.invalidRequest(res);
     }
   }
-
 
   // Function to handle invalid routes
   invalidRequest(res) {
