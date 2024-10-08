@@ -20,28 +20,21 @@ class FileHandler {
     res.end(message);
   }
 
-  // Helper function to escape all special characters for HTML display
-  escapeHtml(text) {
-    return text.replace(/[\u00A0-\u9999<>\&"']/gim, (char) => {
-      return `&#${char.charCodeAt(0)};`;
+  // Function to write text to file
+  writeFile(res, text) {
+    const filePath = path.join(this.tmpDir, 'file.txt');
+    fs.appendFile(filePath, text + '\n', (err) => {
+      let message;
+      if (err) {
+        message = `<p style="color:red;">${messages.errorWriting}</p>`;
+        res.writeHead(500, { 'Content-Type': 'text/html' });
+      } else {
+        message = `<p style="color:green;">${messages.textAppended.replace('%1', text)}</p>`;
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+      }
+      res.end(message);
     });
   }
-
-  // // Function to write text to file
-  // writeFile(res, text) {
-  //   const filePath = path.join(this.tmpDir, 'file.txt');
-  //   fs.appendFile(filePath, text + '\n', (err) => {
-  //     let message;
-  //     if (err) {
-  //       message = `<p style="color:red;">${messages.errorWriting}</p>`;
-  //       res.writeHead(500, { 'Content-Type': 'text/html' });
-  //     } else {
-  //       message = `<p style="color:green;">${messages.textAppended.replace('%1', text)}</p>`;
-  //       res.writeHead(200, { 'Content-Type': 'text/html' });
-  //     }
-  //     res.end(message);
-  //   });
-  // }
 
   // Function to write text to file
   writeFile(res, text) {
