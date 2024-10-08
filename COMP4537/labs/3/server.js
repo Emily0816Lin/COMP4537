@@ -36,25 +36,6 @@ class FileHandler {
     });
   }
 
-  // Function to write text to file
-  writeFile(res, text) {
-    const decodedText = decodeURIComponent(text); // Decode the text from URL encoding
-    const safeText = escapeHtml(decodedText); // Escape all special characters
-
-    const filePath = path.join(this.tmpDir, 'file.txt');
-    fs.appendFile(filePath, safeText + '\n', (err) => {
-      let message;
-      if (err) {
-        message = `<p style="color:red;">${messages.errorWriting}</p>`;
-        res.writeHead(500, { 'Content-Type': 'text/html' });
-      } else {
-        message = `<p style="color:green;">${messages.textAppended.replace('%1', safeText)}</p>`;
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-      }
-      res.end(message);
-    });
-  }
-
   // Function to read a file's content
   readFile(res, fileName) {
     const filePath = path.join(this.tmpDir, fileName);
